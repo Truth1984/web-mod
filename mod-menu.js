@@ -1,9 +1,10 @@
 // ==UserScript==
 // @name         mod-menu
-// @version      0.0.2
+// @version      0.0.3
 // @author       awada
 // @match        *
 // @run-at       document-start
+// @description  run mod-menu first, use window.U_Mod_Menu in other scripts
 // ==/UserScript==
 
 adding = () => {
@@ -20,6 +21,19 @@ adding = () => {
   });
 };
 
+function setLogs(location) {
+  return (...msg) => {
+    console.log(location, new Date().toLocaleTimeString(), ...msg);
+    const consoleElement = document.querySelector("#U_Console");
+    if (consoleElement) {
+      msgs = location + " " + new Date().toLocaleTimeString() + " " + msg.join(" ") + "\n";
+      consoleElement.innerHTML += msgs;
+      modConsole.scrollTop = modConsole.scrollHeight - modConsole.clientHeight;
+    }
+  };
+}
+
+let logs = setLogs("Mod-Menu");
 let storage = {};
 
 function storeSet(map = {}) {
@@ -106,16 +120,6 @@ modButton.addEventListener("mouseup", function () {
   isDragging = false;
 });
 
-function logs(...msg) {
-  console.log("Mod-menu", new Date().toLocaleTimeString(), ...msg);
-  const consoleElement = document.querySelector("#U_Console");
-  if (consoleElement) {
-    msgs = "Mod-menu " + new Date().toLocaleTimeString() + " " + msg.join(" ") + "\n";
-    consoleElement.innerHTML += msgs;
-    modConsole.scrollTop = modConsole.scrollHeight - modConsole.clientHeight;
-  }
-}
-
 function addMod(itemName, itemFunc = (checks, store = {}) => {}) {
   const modMenuItem = document.createElement("div");
   modMenuItem.innerHTML = `<div style="display: inline-block; width: calc(100% - 60px);">${itemName}</div><label style="display: flex;align-items: center;width: 60px;height: 34px;">
@@ -124,10 +128,15 @@ function addMod(itemName, itemFunc = (checks, store = {}) => {}) {
   modMenuItem.state = false;
   modMenuItem.addEventListener("change", () => {
     modMenuItem.state = !modMenuItem.state;
-    logs("ModMenu called:", itemName);
+    logs("Called:", itemName, modMenuItem.state);
     itemFunc(modMenuItem.state, storage);
   });
   modMenu.appendChild(modMenuItem);
 }
 
 adding();
+
+window.U_Mod_Menu = {
+  setLogs,
+  addMod,
+};

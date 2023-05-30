@@ -1,3 +1,9 @@
+## url
+
+```
+https://raw.gitmirror.com/Truth1984/web-mod/main/mod-menu.js
+```
+
 ## script
 
 ```js
@@ -6,10 +12,6 @@
 // @run-at      document-end
 // @include     http://www.example.org/*
 // @exclude     http://www.example.org/foo
-```
 
-## url
-
-```
-https://raw.gitmirror.com/Truth1984/web-mod/main/mod-menu.js
+// entry: window.U_Mod_Menu
 ```
