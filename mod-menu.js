@@ -120,12 +120,13 @@ modButton.addEventListener("mouseup", function () {
   isDragging = false;
 });
 
-function addMod(itemName, itemFunc = (checks, store = {}) => {}) {
+function addMod(itemName, itemFunc = (checks, store = {}) => {}, initState = false) {
   const modMenuItem = document.createElement("div");
   modMenuItem.innerHTML = `<div style="display: inline-block; width: calc(100% - 60px);">${itemName}</div><label style="display: flex;align-items: center;width: 60px;height: 34px;">
-  <input style="margin: auto;" type="checkbox" > </label>`;
+  <input style="margin: auto;" type="checkbox" ${initState ? "" : "checked"}> </label>`;
   modMenuItem.style.cssText = "display:flex; align-items:center; padding:5px; border-bottom:1px solid #ccc;";
-  modMenuItem.state = false;
+  modMenuItem.state = initState;
+  if (initState) itemFunc(modMenuItem.state, storage);
   modMenuItem.addEventListener("change", () => {
     modMenuItem.state = !modMenuItem.state;
     logs("Called:", itemName, modMenuItem.state);

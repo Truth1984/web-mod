@@ -4,6 +4,21 @@
 https://raw.gitmirror.com/Truth1984/web-mod/main/mod-menu.js
 ```
 
+## init new file with
+
+```js
+let u_menu_name = "MENUNAME";
+let logs = (...msg) => console.log(...msg);
+let addMod = (itemName, itemFunc = (checks, store = {}) => {}, initState = false) => {
+  console.log(itemName, new Date().toLocaleTimeString());
+  if (initState) itemFunc(true, {});
+};
+if (window.U_Mod_Menu) {
+  logs = window.U_Mod_Menu.setLogs(u_menu_name);
+  addMod = window.U_Mod_Menu.addMod;
+}
+```
+
 ## script
 
 ```js
