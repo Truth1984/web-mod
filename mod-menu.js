@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         mod-menu
-// @version      0.0.3
+// @version      0.0.4
 // @author       awada
 // @match        *
 // @run-at       document-start
@@ -8,9 +8,13 @@
 // ==/UserScript==
 
 adding = () => {
-  addMod("logging", (checked, storage) => {
-    console.log({ checked, storage });
-  });
+  // addMod("logging", (checked, storage) => {
+  //   console.log({ checked, storage });
+  // });
+
+  // addModNum("nums", (num) => {
+  //   console.log("num", num);
+  // });
 
   addMod("clear U_Storage", () => {
     localStorage.clear("U_Storage");
@@ -33,8 +37,8 @@ function setLogs(location) {
   };
 }
 
-let logs = setLogs("Mod-Menu");
 let storage = {};
+let logs = setLogs("Mod-Menu");
 
 function storeSet(map = {}) {
   storage = Object.assign(storage, map);
@@ -135,9 +139,54 @@ function addMod(itemName, itemFunc = (checks, store = {}) => {}, initState = fal
   modMenu.appendChild(modMenuItem);
 }
 
+function addModNum(itemName, itemFunc = (number, store = {}) => {}, initNum = -1, limit = [0, 2]) {
+  const modMenuItem = document.createElement("div");
+  modMenuItem.innerHTML = `<div style="display:inline-block; text-align:left; width: calc(100% - 80px);">${itemName}</div>
+    <div style="display:inline-block; margin-left:auto;">
+      <span class="U_plus" style="display: inline-block; cursor: pointer; width:10px; height:20px; background:${storage.modMenuBackground}; color:${storage.modMenuColor}; text-align:center; margin-bottom:2px;">+</span>
+      <span class="U_minus" style="display: inline-block; cursor: pointer; width:10px; height:20px; background:${storage.modMenuBackground}; color:${storage.modMenuColor}; text-align:center; margin-top:2px;">-</span>
+    </div>
+    <div style="display:inline-block; margin-left:auto;">
+    <input type="text" value="${initNum}" style="height:20px; width: 20px; text-align: center; font-size: 10px; display:inline-block; vertical-align: middle;height:20px; width: 30px; text-align: center; font-size: 10px; display:inline-block; vertical-align: middle;">
+    </div>`;
+  modMenuItem.style.cssText = "display:flex; align-items:center; padding:5px; border-bottom:1px solid #ccc;";
+  modMenuItem.state = initNum;
+
+  if (initNum != -1) itemFunc(modMenuItem.state, storage);
+
+  const minusBtn = modMenuItem.querySelector(".U_minus");
+  const plusBtn = modMenuItem.querySelector(".U_plus");
+  const numInput = modMenuItem.querySelector("input");
+
+  minusBtn.addEventListener("click", () => {
+    modMenuItem.state = parseInt(numInput.value) - 1;
+    modMenuItem.state = modMenuItem.state < limit[0] ? limit[0] : modMenuItem.state;
+    numInput.value = modMenuItem.state;
+    numInput.dispatchEvent(new Event("change"));
+  });
+
+  plusBtn.addEventListener("click", () => {
+    modMenuItem.state = parseInt(numInput.value) + 1;
+    modMenuItem.state = modMenuItem.state > limit[1] ? limit[1] : modMenuItem.state;
+    numInput.value = modMenuItem.state;
+    numInput.dispatchEvent(new Event("change"));
+  });
+
+  numInput.addEventListener("change", () => {
+    modMenuItem.state = parseInt(numInput.value);
+    modMenuItem.state = modMenuItem.state < limit[0] ? limit[0] : modMenuItem.state;
+    modMenuItem.state = modMenuItem.state > limit[1] ? limit[1] : modMenuItem.state;
+    logs("Called:", itemName, modMenuItem.state);
+    itemFunc(modMenuItem.state, storage);
+  });
+
+  modMenu.appendChild(modMenuItem);
+}
+
 adding();
 
 window.U_Mod_Menu = {
   setLogs,
   addMod,
+  addModNum,
 };
