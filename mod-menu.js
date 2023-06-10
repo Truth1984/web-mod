@@ -1,5 +1,6 @@
 // ==UserScript==
 // @name         mod-menu
+// @namespace    Github, web-mod
 // @version      0.0.4
 // @author       awada
 // @match        *

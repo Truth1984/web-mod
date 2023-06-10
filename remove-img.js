@@ -1,8 +1,9 @@
 // ==UserScript==
 // @name         remove-img
+// @namespace    Github, web-mod
 // @version      0.0.1
 // @author       awada
-// @match        http://www.example.org/*
+// @match        https://www.example.com/*
 // @run-at       document-idle
 // @description  remove images
 // ==/UserScript==

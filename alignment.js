@@ -1,14 +1,18 @@
 // ==UserScript==
 // @name         alignment
-// @version      0.0.1
+// @namespace    Github, web-mod
+// @version      0.0.2
 // @author       awada
-// @match        http://www.example.org/*
-// @run-at       document-idle
+// @match        https://www.example.com/*
+// @run-at       document-end
 // @description  put item to left or right
 // ==/UserScript==
 
 let u_query = "#id";
-let positions = -1; // 0: left, 1: middle, 2: right
+let positions = 0;
+// -1: stop, 0: left, 1: middle, 2: right
+// autoAlignment: align to left when click on left side of screen, vice versa
+let autoAlignment = true;
 
 let u_menu_name = "alignment";
 logs = (...msg) => console.log(...msg);
@@ -37,18 +41,26 @@ let alignObject = (positionNum = positions) => {
   if (pos) {
     logs("aligning item<", query, ">to<", pos, ">");
     const objs = document.querySelectorAll(query);
+    let revert = ["transform", "right", "left"];
     objs.forEach((obj) => {
       obj.style.position = "relative";
-      if (pos === "left") switchStyle(obj, { left: "0", textAlign: "left" }, ["transform", "right", "left"]);
+      if (pos === "left") switchStyle(obj, { left: "0", textAlign: "left" }, revert);
       else if (pos === "middle")
-        switchStyle(obj, { left: "50%", textAlign: "center", transform: "translateX(-50%)" }, [
-          "transform",
-          "right",
-          "left",
-        ]);
-      else if (pos === "right") switchStyle(obj, { right: "0", textAlign: "right" }, ["transform", "right", "left"]);
+        switchStyle(obj, { left: "50%", textAlign: "center", transform: "translateX(-50%)" }, revert);
+      else if (pos === "right") switchStyle(obj, { right: "0", textAlign: "right" }, revert);
     });
   }
 };
+
+if (autoAlignment)
+  document.addEventListener("mouseup", function (e) {
+    if (positions != -1) {
+      let third = window.innerWidth / 3;
+      let mouseX = e.clientX;
+      if (mouseX < third) alignObject(0);
+      else if (mouseX >= third && mouseX < third * 2) alignObject(1);
+      else alignObject(2);
+    }
+  });
 
 addModNum("alignObject", (num) => alignObject(num), positions);
