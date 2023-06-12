@@ -9,6 +9,7 @@
 // ==/UserScript==
 
 let pre_defined = 0;
+let u_query = "#id";
 
 let u_menu_name = "XXX";
 logs = (...msg) => console.log(...msg);
@@ -28,6 +29,10 @@ if (window.U_Mod_Menu) {
 }
 
 let XdoSomething = (def = pre_defined) => {
+  let query = u_query;
+  const objs = document.querySelectorAll(query);
+  objs.forEach((obj) => {});
+
   logs("doSomething");
 };
 
@@ -40,5 +45,5 @@ if ("ontouchstart" in window)
     logs("doSomething");
   });
 
-addMod("remove-img", (state) => XdoSomething(state), false);
+addMod("XXX", (state) => XdoSomething(state), false);
 addModNum("XXX", (num) => XdoSomething(num), positions);
