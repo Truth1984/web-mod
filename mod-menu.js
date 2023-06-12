@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         mod-menu
 // @namespace    Github, web-mod
-// @version      0.0.4
+// @version      0.0.5
 // @author       awada
 // @match        *
 // @run-at       document-start
@@ -104,24 +104,42 @@ modButton.addEventListener("mousedown", function (e) {
   offsetY = e.clientY - modButton.offsetTop;
 });
 
+modButton.addEventListener("touchstart", function (e) {
+  isDragging = true;
+  offsetX = (e.clientX || e.pageX) - modButton.offsetLeft;
+  offsetY = (e.clientY || e.pageY) - modButton.offsetTop;
+});
+
 modButton.addEventListener("click", function () {
   if (!isMoved) modMenu.style.display = modMenu.style.display === "none" ? "block" : "none";
   else isMoved = false;
 });
 
-document.addEventListener("mousemove", function (e) {
+let mouseCalc = (e) => {
   if (isDragging) {
-    modButton.style.left = e.clientX - offsetX + "px";
-    modButton.style.top = e.clientY - offsetY + "px";
-    modMenu.style.left = e.clientX - offsetX + "px";
-    modMenu.style.top = e.clientY - offsetY + 60 + "px";
-    modConsole.style.left = e.clientX - offsetX + "px";
-    modConsole.style.top = e.clientY - offsetY + 80 + "px";
+    modButton.style.left = (e.clientX || e.pageX) - offsetX + "px";
+    modButton.style.top = (e.clientY || e.pageY) - offsetY + "px";
+    modMenu.style.left = (e.clientX || e.pageX) - offsetX + "px";
+    modMenu.style.top = (e.clientY || e.pageY) - offsetY + 60 + "px";
+    modConsole.style.left = (e.clientX || e.pageX) - offsetX + "px";
+    modConsole.style.top = (e.clientY || e.pageY) - offsetY + 80 + "px";
     isMoved = true;
   }
+};
+
+document.addEventListener("mousemove", function (e) {
+  mouseCalc(e);
+});
+
+document.addEventListener("touchmove", function (e) {
+  mouseCalc(e);
 });
 
 modButton.addEventListener("mouseup", function () {
+  isDragging = false;
+});
+
+modButton.addEventListener("touchend", function () {
   isDragging = false;
 });
 

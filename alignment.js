@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         alignment
 // @namespace    Github, web-mod
-// @version      0.0.2
+// @version      0.0.3
 // @author       awada
 // @match        https://www.example.com/*
 // @run-at       document-end
@@ -52,15 +52,27 @@ let alignObject = (positionNum = positions) => {
   }
 };
 
-if (autoAlignment)
+if (autoAlignment) {
   document.addEventListener("mouseup", function (e) {
     if (positions != -1) {
       let third = window.innerWidth / 3;
-      let mouseX = e.clientX;
+      let mouseX = e.pageX || e.clientX;
       if (mouseX < third) alignObject(0);
       else if (mouseX >= third && mouseX < third * 2) alignObject(1);
       else alignObject(2);
     }
   });
+
+  if ("ontouchstart" in window)
+    document.addEventListener("touchend", function (e) {
+      if (positions != -1) {
+        let third = window.innerWidth / 3;
+        let mouseX = e.clientX || e.pageX || e.touches[0].pageX || e.touches[0].clientX;
+        if (mouseX < third) alignObject(0);
+        else if (mouseX >= third && mouseX < third * 2) alignObject(1);
+        else alignObject(2);
+      }
+    });
+}
 
 addModNum("alignObject", (num) => alignObject(num), positions);
