@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         mod-menu
 // @namespace    Github, web-mod
-// @version      0.0.6
+// @version      0.0.7
 // @author       awada
 // @match        *
 // @run-at       document-start
@@ -23,6 +23,10 @@ adding = () => {
 
   addMod("logging Panel", (checks) => {
     modConsole.style.display = checks ? "block" : "none";
+  });
+
+  addMod("color-switch", (checks) => {
+    colorSet(checks);
   });
 };
 
@@ -57,22 +61,6 @@ if (localStorage.getItem("U_Storage")) {
     modConsoleBackground: "black",
     modConsoleColor: "white",
   };
-
-  function isBackgroundLight(ele = "html") {
-    let element = document.querySelector(ele);
-    const bgColor = window.getComputedStyle(element).backgroundColor;
-    const colorValues = bgColor.match(/\d+/g).map(Number);
-    const brightness = (colorValues[0] * 299 + colorValues[1] * 587 + colorValues[2] * 114) / 1000;
-    return brightness < 128;
-  }
-
-  if (!isBackgroundLight()) {
-    storage.modBackground = "white";
-    storage.modMenuBackground = "white";
-    storage.modColor = "black";
-    storage.modMenuColor = "black";
-  }
-
   storeSet(storage);
 }
 
@@ -89,9 +77,38 @@ const modConsole = document.createElement("textarea");
 modConsole.id = "U_Console";
 modConsole.readOnly = true;
 modConsole.disabled = true;
-modConsole.style.cssText = `z-index:9997; position: fixed; bottom: 20px; right: 20px; width: 400px; height: 200px; background-color: rgba(49, 49, 49, 0.5); border-radius: 10px; color: black; padding: 10px; display: none; user-select: none; overflow: scroll;`;
+modConsole.style.cssText = `z-index:9997; position: fixed; bottom: 20px; right: 20px; width: 400px; height: 200px; background-color: ${storage.modConsoleBackground}; border-radius: 10px; color: ${storage.modConsoleColor}; opacity: 0.5; padding: 10px; display: none; user-select: none; overflow: scroll;`;
 modConsole.innerText = "";
 document.body.appendChild(modConsole);
+
+function colorSet(state) {
+  if (state) {
+    storage = {
+      modBackground: "white",
+      modMenuBackground: "white",
+      modColor: "black",
+      modMenuColor: "black",
+      modConsoleBackground: "white",
+      modConsoleColor: "black",
+    };
+  } else {
+    storage = {
+      modBackground: "black",
+      modMenuBackground: "black",
+      modColor: "white",
+      modMenuColor: "white",
+      modConsoleBackground: "black",
+      modConsoleColor: "white",
+    };
+  }
+  storeSet(storage);
+  modButton.style.color = storage.modColor;
+  modButton.style.backgroundColor = storage.modBackground;
+  modMenu.style.color = storage.modMenuColor;
+  modMenu.style.backgroundColor = storage.modMenuBackground;
+  modConsole.style.color = storage.modConsoleColor;
+  modConsole.style.backgroundColor = storage.modConsoleBackground;
+}
 
 let isDragging = false;
 let isMoved = false;
@@ -104,16 +121,12 @@ modButton.addEventListener("mousedown", function (e) {
   offsetY = e.clientY - modButton.offsetTop;
 });
 
-modButton.addEventListener(
-  "touchstart",
-  function (e) {
-    e.preventDefault();
-    isDragging = true;
-    offsetX = (e.clientX || e.pageX) - modButton.offsetLeft;
-    offsetY = (e.clientY || e.pageY) - modButton.offsetTop;
-  },
-  { passive: false }
-);
+modButton.addEventListener("touchstart", function (e) {
+  e.preventDefault();
+  isDragging = true;
+  offsetX = (e.clientX || e.pageX) - modButton.offsetLeft;
+  offsetY = (e.clientY || e.pageY) - modButton.offsetTop;
+});
 
 modButton.addEventListener("click", function () {
   if (!isMoved) modMenu.style.display = modMenu.style.display === "none" ? "block" : "none";
