@@ -41,9 +41,14 @@ document.addEventListener("mouseup", function (e) {
 });
 
 if ("ontouchstart" in window)
-  document.addEventListener("touchend", function (e) {
-    logs("doSomething");
-  });
+  document.addEventListener(
+    "touchstart",
+    function (e) {
+      logs("doSomething");
+      e.preventDefault();
+    },
+    { passive: false }
+  );
 
 addMod("XXX", (state) => XdoSomething(state), false);
 addModNum("XXX", (num) => XdoSomething(num), positions);

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         mod-menu
 // @namespace    Github, web-mod
-// @version      0.0.5
+// @version      0.0.6
 // @author       awada
 // @match        *
 // @run-at       document-start
@@ -104,11 +104,16 @@ modButton.addEventListener("mousedown", function (e) {
   offsetY = e.clientY - modButton.offsetTop;
 });
 
-modButton.addEventListener("touchstart", function (e) {
-  isDragging = true;
-  offsetX = (e.clientX || e.pageX) - modButton.offsetLeft;
-  offsetY = (e.clientY || e.pageY) - modButton.offsetTop;
-});
+modButton.addEventListener(
+  "touchstart",
+  function (e) {
+    e.preventDefault();
+    isDragging = true;
+    offsetX = (e.clientX || e.pageX) - modButton.offsetLeft;
+    offsetY = (e.clientY || e.pageY) - modButton.offsetTop;
+  },
+  { passive: false }
+);
 
 modButton.addEventListener("click", function () {
   if (!isMoved) modMenu.style.display = modMenu.style.display === "none" ? "block" : "none";
